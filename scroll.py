@@ -106,6 +106,10 @@ def main():
 
         # TODO: loop music
 
+    # Write our final credential information for use later.
+    with open(credential_path, 'w') as stream:
+        json.dump(json.loads(credentials.to_json()), stream)  # https://google-auth.readthedocs.io/en/stable/reference/google.oauth2.credentials.html#google.oauth2.credentials.Credentials.to_json
+
 
 if __name__ == '__main__':
     main()
