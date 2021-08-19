@@ -102,7 +102,7 @@ def main():
             with open(pathlib.Path(music_dir, music['name']), 'wb') as stream:
                 stream.write(file.content)
 
-        subprocess.run(f'mpg123 --random {music_dir} &', shell=True)
+        subprocess.run(f'mpg123 --random {music_dir}/* &', shell=True)
 
     # Write our final credential information for use later.
     with open(credential_path, 'w') as stream:
