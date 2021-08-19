@@ -12,9 +12,10 @@ from google.oauth2.credentials import Credentials
 def main():
     parser = argparse.ArgumentParser(description='A tool for fetching and scrolling images stored in Google Drive.')
     parser.add_argument('--credential-store', required=True, help='Location of persistent credential store.')
-    parser.add_argument('--fallback-image', help='Locally stored image that will be displayed if unable to fetch Google Drive images.')
+    parser.add_argument('--fallback-image', help='Full path of a local image that will be displayed if there is an error.')
     parser.add_argument('--images-parent-id', required=True, help='Google Drive parent (folder) id that contains the child images.')
     parser.add_argument('--music-parent-id', help='Google Drive parent (folder) id that contains the child music files.')
+    parser.add_argument('--slideshow-interval', default=10, help='Number of seconds between images. (default: 10)')
     args = parser.parse_args()
 
     # https://developers.google.com/drive/api/v3/about-auth
@@ -31,7 +32,8 @@ def main():
             del credentials_file['expiry']
     else:
         print('ERROR: Credential store provided is not a file')
-        # TODO: show fallback image
+        if args.fallback_image:
+            subprocess.run(f'feh {args.fallback_image} &', check=True, shell=True)
         sys.exit(1)
 
     # Assume this is the first run and we need to go through the OAuth workflow.
@@ -66,7 +68,6 @@ def main():
         shutil.rmtree(images_dir)
     images_dir.mkdir(parents=True)
 
-    image_paths = []
     for image in image_files:
         # https://developers.google.com/drive/api/v3/reference/files/get
         file = session.get(f'https://www.googleapis.com/drive/v3/files/{image["id"]}?alt=media')
@@ -79,19 +80,15 @@ def main():
         #   "mimeType": "image/jpeg"
         # }
 
-        image_path = pathlib.Path(images_dir, image['name'])
-        with open(image_path, 'wb') as stream:
+        with open(pathlib.Path(images_dir, image['name']), 'wb') as stream:
             stream.write(file.content)
-        image_paths.append(image_path)
 
-    # subprocess.run('/usr/bin/fbi -noverbose -a -T 1 -t 10 %s' % ' '.join(image_paths), shell=True)
+    subprocess.run(f'feh --slideshow-delay {args.slideshow_interval} {images_dir} &', check=True, shell=True)
 
     # Do almost everything again but for music this time.
     if args.music_parent_id:
         music_list = session.get(f'https://www.googleapis.com/drive/v3/files?supportsAllDrives=true&includeItemsFromAllDrives=true&q=\'{args.music_parent_id}\' in parents and trashed = false')
         music_files = [file for file in music_list.json()['files'] if file['mimeType'].startswith('audio')]  # Audio only, please.
-        print(music_list)
-        print(music_files)
 
         music_dir = pathlib.Path('/tmp/gdrive-scroll/music')
         if music_dir.exists():
