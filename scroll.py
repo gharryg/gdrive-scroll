@@ -10,7 +10,7 @@ from google.oauth2.credentials import Credentials
 
 
 def main():
-    parser = argparse.ArgumentParser(description='A tool for fetching and scrolling images stored in Google Drive.')
+    parser = argparse.ArgumentParser(description='A tool for fetching and scrolling images (and music) stored in Google Drive.')
     parser.add_argument('--credential-store', required=True, help='Location of persistent credential store.')
     parser.add_argument('--images-parent-id', required=True, help='Google Drive parent (folder) id that contains the child images.')
     parser.add_argument('--music-parent-id', help='Google Drive parent (folder) id that contains the child music files.')
