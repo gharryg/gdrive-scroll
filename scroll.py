@@ -22,6 +22,9 @@ def main():
     # https://google-auth.readthedocs.io/en/latest/user-guide.html#user-credentials
     # Tool for checking access tokens: https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=[TOKEN]
 
+    # pylint: disable=subprocess-run-check
+    # We are sending everything to the background anyway so using check won't affect anything.
+
     credential_path = pathlib.Path(args.credential_store)
     if credential_path.is_file():
         with open(credential_path) as stream:
@@ -33,7 +36,7 @@ def main():
     else:
         print('ERROR: Credential store provided is not a file')
         if args.fallback_image:
-            subprocess.run(f'feh {args.fallback_image} &', check=True, shell=True)
+            subprocess.run(f'feh {args.fallback_image} &', shell=True)
         sys.exit(1)
 
     # Assume this is the first run and we need to go through the OAuth workflow.
@@ -83,28 +86,26 @@ def main():
         with open(pathlib.Path(images_dir, image['name']), 'wb') as stream:
             stream.write(file.content)
 
-    subprocess.run(f'feh --slideshow-delay {args.slideshow_interval} {images_dir} &', check=True, shell=True)
+    subprocess.run(f'feh --slideshow-delay {args.slideshow_interval} {images_dir} &', shell=True)
 
     # Do almost everything again but for music this time.
     if args.music_parent_id:
         music_list = session.get(f'https://www.googleapis.com/drive/v3/files?supportsAllDrives=true&includeItemsFromAllDrives=true&q=\'{args.music_parent_id}\' in parents and trashed = false')
-        music_files = [file for file in music_list.json()['files'] if file['mimeType'].startswith('audio')]  # Audio only, please.
+        music_files = [file for file in music_list.json()['files'] if file['mimeType'] == 'audio/mpeg']  # MPEG only, please.
+        print(music_list.json())
 
         music_dir = pathlib.Path('/tmp/gdrive-scroll/music')
         if music_dir.exists():
             shutil.rmtree(music_dir)
         music_dir.mkdir(parents=True)
 
-        music_paths = []
         for music in music_files:
             file = session.get(f'https://www.googleapis.com/drive/v3/files/{music["id"]}?alt=media')
 
-            music_path = pathlib.Path(music_dir, music['name'])
-            with open(music_path, 'wb') as stream:
+            with open(pathlib.Path(music_dir, music['name']), 'wb') as stream:
                 stream.write(file.content)
-            music_paths.append(music_path)
 
-        # TODO: loop music
+        subprocess.run(f'mpg123 --random {music_dir} &', shell=True)
 
     # Write our final credential information for use later.
     with open(credential_path, 'w') as stream:
