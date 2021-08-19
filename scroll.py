@@ -12,7 +12,6 @@ from google.oauth2.credentials import Credentials
 def main():
     parser = argparse.ArgumentParser(description='A tool for fetching and scrolling images stored in Google Drive.')
     parser.add_argument('--credential-store', required=True, help='Location of persistent credential store.')
-    parser.add_argument('--fallback-image', help='Full path of a local image that will be displayed if there is an error.')
     parser.add_argument('--images-parent-id', required=True, help='Google Drive parent (folder) id that contains the child images.')
     parser.add_argument('--music-parent-id', help='Google Drive parent (folder) id that contains the child music files.')
     parser.add_argument('--slideshow-interval', default=10, help='Number of seconds between images. (default: 10)')
@@ -35,8 +34,6 @@ def main():
             del credentials_file['expiry']
     else:
         print('ERROR: Credential store provided is not a file')
-        if args.fallback_image:
-            subprocess.run(f'feh {args.fallback_image} &', shell=True)
         sys.exit(1)
 
     # Assume this is the first run and we need to go through the OAuth workflow.
