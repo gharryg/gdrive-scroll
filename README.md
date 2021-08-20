@@ -10,15 +10,17 @@ This program was developed to be used on a Raspberry Pi for a digital signage pu
  - [google-auth-oauthlib](https://google-auth-oauthlib.readthedocs.io/en/latest/index.html)
 
 ### Google Drive API
-You will need to have a project in Google Cloud with a configured OAuth client in order to access the Drive API. The only scope needed in the consent screen is: `https://www.googleapis.com/auth/drive.readonly`
-Read more here: https://developers.google.com/drive/api/v3/about-sdk
+You will need to have a project in Google Cloud with a configured OAuth client in order to access the Drive API. The only scope needed in the consent screen is: `https://www.googleapis.com/auth/drive.readonly` Read more here: https://developers.google.com/drive/api/v3/about-sdk
 
 ### Credential Store
-Before the first run of the program, create a JSON file with the following OAuth keys:
+Before the first run of the program, create a JSON file with the following OAuth keys and values from your Google Cloud project:
 ````json
 {"client_id": "FOO", "client_secret": "BAR"}
 ````
 After the first run, the program will store the access token in that file and transparently take care of refreshing the token.
+
+### Music
+Since we use `mpg123` to play music, only MPEG (mp1/mp2/mp3) files are allowed.
 
 ### Usage
 ````
