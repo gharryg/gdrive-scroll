@@ -6,7 +6,7 @@ This program was developed to be used on a Raspberry Pi for a digital signage pu
 ### Dependencies
  - Python 3.7+
  - [feh](https://feh.finalrewind.org/) (requires [X](https://www.x.org/wiki/))
- - [mpg](https://www.mpg123.de/)
+ - [mpg123](https://www.mpg123.de/)
  - [google-auth-oauthlib](https://google-auth-oauthlib.readthedocs.io/en/latest/index.html)
 
 ### Google Drive API
