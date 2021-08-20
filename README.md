@@ -24,29 +24,17 @@ After the first run, the program will store the access token in that file and tr
 ````
 usage: scroll.py [-h] --credential-store CREDENTIAL_STORE --images-parent-id IMAGES_PARENT_ID [--music-parent-id MUSIC_PARENT_ID] [--slideshow-interval SLIDESHOW_INTERVAL]
 
-
-
 A tool for fetching and scrolling images (and music) stored in Google Drive.
 
-
-
 optional arguments:
+  -h, --help            show this help message and exit
+  --credential-store CREDENTIAL_STORE
+                        Location of persistent credential store.
+  --images-parent-id IMAGES_PARENT_ID
+                        Google Drive parent (folder) id that contains the child images.
+  --music-parent-id MUSIC_PARENT_ID
+                        Google Drive parent (folder) id that contains the child music files.
+  --slideshow-interval SLIDESHOW_INTERVAL
+                        Number of seconds between images. (default: 10)
 
--h, --help  show this help message and exit
-
---credential-store CREDENTIAL_STORE
-
-Location of persistent credential store.
-
---images-parent-id IMAGES_PARENT_ID
-
-Google Drive parent (folder) id that contains the child images.
-
---music-parent-id MUSIC_PARENT_ID
-
-Google Drive parent (folder) id that contains the child music files.
-
---slideshow-interval SLIDESHOW_INTERVAL
-
-Number of seconds between images. (default: 10)
 ````
