@@ -4,9 +4,11 @@ import pathlib
 import shutil
 import subprocess
 import sys
+from time import sleep
 from google_auth_oauthlib import get_user_credentials
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2.credentials import Credentials
+import requests
 
 
 def main():
@@ -14,8 +16,19 @@ def main():
     parser.add_argument('--credential-store', required=True, help='Location of persistent credential store.')
     parser.add_argument('--images-parent-id', required=True, help='Google Drive parent (folder) id that contains the child images.')
     parser.add_argument('--music-parent-id', help='Google Drive parent (folder) id that contains the child music files.')
+    parser.add_argument('--no-connection-check', action='store_true', help='If used, will skip internet connection check.')
     parser.add_argument('--slideshow-interval', default=10, help='Number of seconds between images. (default: 10)')
     args = parser.parse_args()
+
+    # Check to see if we have internet access; if not, wait untill we get it.
+    if not args.no_connection_check:
+        while True:
+            try:
+                requests.get('https://www.google.com')
+            except:  # pylint: disable=bare-except
+                sleep(15)
+            else:
+                break
 
     # https://developers.google.com/drive/api/v3/about-auth
     # https://google-auth.readthedocs.io/en/latest/user-guide.html#user-credentials
